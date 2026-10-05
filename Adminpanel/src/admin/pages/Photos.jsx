@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/photos";
-const SERVER_URL = "http://localhost:4000";
+const API_URL = "https://aayshastudio.onrender.com/api/photos";
+const SERVER_URL = "https://aayshastudio.onrender.com";
 
 function Photos() {
   const [photos, setPhotos] = useState([]);

@@ -19,7 +19,7 @@ import {
   MdDashboard,
 } from "react-icons/md";
 
-const API_URL = "http://localhost:4000/api";
+const API_URL = "https://aayshastudio.onrender.com/api";
 
 function Dashboard() {
   const [photos, setPhotos] = useState([]);

@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/videos";
-const SERVER_URL = "http://localhost:4000";
+const API_URL = "https://aayshastudio.onrender.com/api/videos";
+const SERVER_URL = "https://aayshastudio.onrender.com";
 
 function Videos() {
   const [videos, setVideos] = useState([]);

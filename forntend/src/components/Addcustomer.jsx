@@ -26,7 +26,7 @@ function Addcustomer() {
       console.log(customer);
 
       const response = await fetch(
-        "http://localhost:4000/api/customers/",
+        "https://aayshastudio.onrender.com/api/customers/",
         {
           method: "POST",
           headers: {

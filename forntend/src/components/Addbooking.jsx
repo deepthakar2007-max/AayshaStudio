@@ -24,7 +24,7 @@ function AddBooking() {
 
     try {
       const response = await fetch(
-        "http://localhost:4000/api/bookings/",
+        "https://aayshastudio.onrender.com/api/bookings/",
         {
           method: "POST",
           headers: {

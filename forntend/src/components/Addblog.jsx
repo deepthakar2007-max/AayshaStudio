@@ -63,7 +63,7 @@ const Blog = () => {
 
       // Send data to backend
       const response = await axios.post(
-        "http://localhost:4000/api/blog",
+        "https://aayshastudio.onrender.com/api/blog",
         data
       );
 

@@ -29,7 +29,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:4000/api/auth/register",
+        "https://aayshastudio.onrender.com/api/auth/register",
         {
           name: formData.name,
           email: formData.email,

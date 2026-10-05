@@ -24,7 +24,7 @@ const AddPhoto = () => {
       formData.append("image", image);
 
       const response = await fetch(
-        "http://localhost:4000/api/photos",
+        "https://aayshastudio.onrender.com/api/photos",
         {
           method: "POST",
           body: formData,

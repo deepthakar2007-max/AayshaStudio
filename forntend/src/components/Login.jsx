@@ -22,7 +22,7 @@ const Login = () => {
 
         try {
             const response = await axios.post(
-                "http://localhost:4000/api/auth/login",
+                "https://aayshastudio.onrender.com/api/auth/login",
                 formData
             );
 

@@ -237,7 +237,7 @@ function Profile() {
       Example:
 
       await axios.put(
-        "http://localhost:4000/api/admin/change-password",
+        "https://aayshastudio.onrender.com/api/admin/change-password",
         {
           currentPassword,
           newPassword,

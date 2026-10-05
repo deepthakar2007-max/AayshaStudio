@@ -2,7 +2,7 @@
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 
-const API_URL = "http://localhost:4000/api/bookings";
+const API_URL = "https://aayshastudio.onrender.com/api/bookings";
 
 function Bookings() {
   const [bookings, setBookings] = useState([]);

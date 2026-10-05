@@ -9,7 +9,7 @@ function Booking() {
   async function fetchdata() {
     try {
       const response = await fetch(
-        "http://localhost:4000/api/bookings/"
+        "https://aayshastudio.onrender.com/api/bookings/"
       );
 
       if (!response.ok) {
@@ -47,7 +47,7 @@ function Booking() {
 
     try {
       const response = await fetch(
-        `http://localhost:4000/api/bookings/${id}`,
+        `https://aayshastudio.onrender.com/api/bookings/${id}`,
         {
           method: "DELETE",
         }

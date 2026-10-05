@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function Blogs() {
-  const API_URL = "http://localhost:4000/api/blog";
-  const SERVER_URL = "http://localhost:4000";
+  const API_URL = "https://aayshastudio.onrender.com/api/blog";
+  const SERVER_URL = "https://aayshastudio.onrender.com";
 
   const [blogs, setBlogs] = useState([]);
   const [search, setSearch] = useState("");

@@ -13,7 +13,7 @@ const Blog = () => {
     const getBlogs = async () => {
         try {
             const response = await axios.get(
-                "http://localhost:4000/api/blog"
+                "https://aayshastudio.onrender.com/api/blog"
             );
 
             console.log(response.data);
@@ -102,7 +102,7 @@ const Blog = () => {
 
                                         {blog.image ? (
                                             <img
-                                                src={`http://localhost:4000${blog.image}`}
+                                                src={`https://aayshastudio.onrender.com${blog.image}`}
                                                 alt={blog.title}
                                                 className="h-56 w-full object-cover transition duration-500 group-hover:scale-105"
                                             />

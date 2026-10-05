@@ -24,7 +24,7 @@ const Addvideo = () => {
       formData.append("video", video);
 
       const response = await fetch(
-        "http://localhost:4000/api/videos",
+        "https://aayshastudio.onrender.com/api/videos",
         {
           method: "POST",
           body: formData,
