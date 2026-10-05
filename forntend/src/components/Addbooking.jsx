@@ -40,7 +40,7 @@ function AddBooking() {
 
       if (result.success) {
         alert("Booking Created Successfully");
-        navigate("/Booking");
+       ;
       } else {
         alert(result.message || "Booking failed");
       }

@@ -4,6 +4,7 @@ const {
   register,
   login,
   getUsers,
+  deleteUser
   
 } = require("./../controller/authcontroller.js");
 
@@ -14,6 +15,8 @@ router.post("/register", register);
 router.post("/login", login);
 
 router.get("/users", getUsers);
+
+router.delete("/users/:id", deleteUser);
 
 
 module.exports = router;
