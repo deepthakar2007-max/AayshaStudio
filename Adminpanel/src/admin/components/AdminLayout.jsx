@@ -1,29 +1,45 @@
 import { Outlet } from "react-router-dom";
+import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
 function AdminLayout() {
-  return (
-    <div className="min-h-screen bg-gray-100 flex">
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
-      {/* Sidebar */}
-      <Sidebar />
+    return (
+        <div className="min-h-screen bg-gray-100">
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+            {/* Sidebar */}
+            <Sidebar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
-        {/* Topbar */}
-        <Topbar />
+            {/* Overlay - Mobile */}
+            {sidebarOpen && (
+                <div
+                    onClick={() => setSidebarOpen(false)}
+                    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+                ></div>
+            )}
 
-        {/* Page Content */}
-        <main className="flex-1 p-6">
-          <Outlet />
-        </main>
+            {/* Main Area */}
+            <div className="min-h-screen lg:ml-64">
 
-      </div>
+                {/* Topbar */}
+                <Topbar
+                    onMenuClick={() => setSidebarOpen(true)}
+                />
 
-    </div>
-  );
+                {/* Page Content */}
+                <main className="p-3 sm:p-4 md:p-6 lg:p-8">
+                    <Outlet />
+                </main>
+
+            </div>
+
+        </div>
+    );
 }
 
 export default AdminLayout;
