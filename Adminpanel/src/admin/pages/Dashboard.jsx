@@ -19,9 +19,204 @@ import {
     MdDashboard,
 } from "react-icons/md";
 
-const API_URL =
-    "https://aayshastudio.onrender.com/api";
+const API_URL = "https://aayshastudio.onrender.com/api";
 
+// =====================================================
+// GET ARRAY FROM API RESPONSE
+// =====================================================
+const getArray = (response) => {
+    if (Array.isArray(response?.data)) {
+        return response.data;
+    }
+
+    if (Array.isArray(response?.data?.data)) {
+        return response.data.data;
+    }
+
+    if (Array.isArray(response?.data?.photos)) {
+        return response.data.photos;
+    }
+
+    if (Array.isArray(response?.data?.videos)) {
+        return response.data.videos;
+    }
+
+    if (Array.isArray(response?.data?.bookings)) {
+        return response.data.bookings;
+    }
+
+    if (Array.isArray(response?.data?.users)) {
+        return response.data.users;
+    }
+
+    if (Array.isArray(response?.data?.customers)) {
+        return response.data.customers;
+    }
+
+    if (Array.isArray(response?.data?.blogs)) {
+        return response.data.blogs;
+    }
+
+    if (Array.isArray(response?.data?.blog)) {
+        return response.data.blog;
+    }
+
+    return [];
+};
+
+// =====================================================
+// STAT CARD
+// =====================================================
+function StatCard({
+    title,
+    value,
+    icon,
+    iconBg,
+    iconColor,
+    description,
+}) {
+    return (
+        <div
+            className="
+                group
+                min-w-0
+                overflow-hidden
+                rounded-2xl
+                border border-gray-200
+                bg-white
+                p-4
+                shadow-sm
+                transition-all
+                duration-300
+                hover:-translate-y-1
+                hover:shadow-lg
+                sm:p-5
+            "
+        >
+            <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs font-medium text-gray-500 sm:text-sm">
+                        {title}
+                    </p>
+
+                    <h3 className="mt-2 truncate text-2xl font-bold tracking-tight text-gray-800 sm:text-3xl">
+                        {value}
+                    </h3>
+                </div>
+
+                <div
+                    className={`
+                        flex
+                        h-10
+                        w-10
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-xl
+                        ${iconBg}
+                        ${iconColor}
+                        transition-transform
+                        duration-300
+                        group-hover:scale-110
+                        sm:h-11
+                        sm:w-11
+                    `}
+                >
+                    {icon}
+                </div>
+            </div>
+
+            <div className="mt-4 flex min-w-0 items-center gap-2">
+                <MdTrendingUp
+                    size={16}
+                    className="shrink-0 text-green-500"
+                />
+
+                <span className="truncate text-xs font-medium text-gray-500">
+                    {description}
+                </span>
+            </div>
+        </div>
+    );
+}
+
+// =====================================================
+// QUICK ACTION
+// =====================================================
+function QuickAction({
+    to,
+    icon,
+    title,
+    description,
+    iconBg,
+    iconColor,
+}) {
+    return (
+        <Link
+            to={to}
+            className="
+                group
+                flex
+                min-w-0
+                items-center
+                gap-3
+                overflow-hidden
+                rounded-xl
+                border border-gray-200
+                bg-white
+                p-3
+                transition-all
+                duration-200
+                hover:-translate-y-0.5
+                hover:border-gray-300
+                hover:shadow-md
+                sm:p-4
+            "
+        >
+            <div
+                className={`
+                    flex
+                    h-10
+                    w-10
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    ${iconBg}
+                    ${iconColor}
+                    sm:h-11
+                    sm:w-11
+                `}
+            >
+                {icon}
+            </div>
+
+            <div className="min-w-0 flex-1">
+                <h4 className="truncate text-sm font-semibold text-gray-800">
+                    {title}
+                </h4>
+
+                <p className="truncate text-xs text-gray-500">
+                    {description}
+                </p>
+            </div>
+
+            <MdArrowForward
+                className="
+                    shrink-0
+                    text-lg
+                    text-gray-400
+                    transition-transform
+                    group-hover:translate-x-1
+                "
+            />
+        </Link>
+    );
+}
+
+// =====================================================
+// DASHBOARD
+// =====================================================
 function Dashboard() {
     const [photos, setPhotos] = useState([]);
     const [videos, setVideos] = useState([]);
@@ -33,71 +228,26 @@ function Dashboard() {
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState("");
 
-    // ==========================================
-    // GET ARRAY FROM API RESPONSE
-    // ==========================================
-    const getArray = (response) => {
-        const result = response?.data;
-
-        if (Array.isArray(result)) {
-            return result;
-        }
-
-        if (Array.isArray(result?.data)) {
-            return result.data;
-        }
-
-        if (Array.isArray(result?.photos)) {
-            return result.photos;
-        }
-
-        if (Array.isArray(result?.videos)) {
-            return result.videos;
-        }
-
-        if (Array.isArray(result?.bookings)) {
-            return result.bookings;
-        }
-
-        if (Array.isArray(result?.users)) {
-            return result.users;
-        }
-
-        if (Array.isArray(result?.customers)) {
-            return result.customers;
-        }
-
-        if (Array.isArray(result?.blogs)) {
-            return result.blogs;
-        }
-
-        if (Array.isArray(result?.blog)) {
-            return result.blog;
-        }
-
-        return [];
-    };
-
-    // ==========================================
-    // FETCH DASHBOARD DATA
-    // ==========================================
+    // =================================================
+    // FETCH DATA
+    // =================================================
     const fetchDashboardData = useCallback(
         async (isRefresh = false) => {
             try {
+                setError("");
+
                 if (isRefresh) {
                     setRefreshing(true);
                 } else {
                     setLoading(true);
                 }
 
-                setError("");
-
                 const [
-                    photosRes,
-                    videosRes,
-                    bookingsRes,
-                    usersRes,
-                    blogsRes,
+                    photosResponse,
+                    videosResponse,
+                    bookingsResponse,
+                    usersResponse,
+                    blogsResponse,
                 ] = await Promise.all([
                     axios.get(`${API_URL}/photos`),
                     axios.get(`${API_URL}/videos`),
@@ -106,53 +256,18 @@ function Dashboard() {
                     axios.get(`${API_URL}/blog`),
                 ]);
 
-                console.log(
-                    "PHOTOS API:",
-                    photosRes.data
-                );
-
-                console.log(
-                    "VIDEOS API:",
-                    videosRes.data
-                );
-
-                console.log(
-                    "BOOKINGS API:",
-                    bookingsRes.data
-                );
-
-                console.log(
-                    "USERS API:",
-                    usersRes.data
-                );
-
-                console.log(
-                    "BLOG API:",
-                    blogsRes.data
-                );
-
-                setPhotos(getArray(photosRes));
-                setVideos(getArray(videosRes));
-                setBookings(getArray(bookingsRes));
-                setUsers(getArray(usersRes));
-                setBlogs(getArray(blogsRes));
-
+                setPhotos(getArray(photosResponse));
+                setVideos(getArray(videosResponse));
+                setBookings(getArray(bookingsResponse));
+                setUsers(getArray(usersResponse));
+                setBlogs(getArray(blogsResponse));
             } catch (err) {
-                console.error(
-                    "Dashboard API Error:",
-                    err
-                );
-
-                console.error(
-                    "Response:",
-                    err.response?.data
-                );
+                console.error("Dashboard API Error:", err);
 
                 setError(
-                    err.response?.data?.message ||
-                    "Unable to load dashboard data. Please check your API."
+                    err?.response?.data?.message ||
+                        "Unable to load dashboard data."
                 );
-
             } finally {
                 setLoading(false);
                 setRefreshing(false);
@@ -161,286 +276,173 @@ function Dashboard() {
         []
     );
 
-    // ==========================================
-    // LOAD DASHBOARD
-    // ==========================================
+    // =================================================
+    // INITIAL LOAD
+    // =================================================
     useEffect(() => {
         fetchDashboardData();
     }, [fetchDashboardData]);
 
-    // ==========================================
+    // =================================================
     // RECENT BOOKINGS
-    // ==========================================
+    // =================================================
     const recentBookings = [...bookings]
         .sort((a, b) => {
             const dateA = new Date(
-                a.createdAt ||
-                a.date ||
-                a.bookingDate ||
-                0
-            ).getTime();
+                a?.createdAt ||
+                    a?.date ||
+                    a?.bookingDate ||
+                    0
+            );
 
             const dateB = new Date(
-                b.createdAt ||
-                b.date ||
-                b.bookingDate ||
-                0
-            ).getTime();
+                b?.createdAt ||
+                    b?.date ||
+                    b?.bookingDate ||
+                    0
+            );
 
             return dateB - dateA;
         })
         .slice(0, 5);
 
-    // ==========================================
-    // BOOKING STATUS COUNTS
-    // ==========================================
-    const confirmedBookings =
-        bookings.filter(
-            (booking) =>
-                String(
-                    booking.status || ""
-                ).toLowerCase() === "confirmed"
-        ).length;
+    // =================================================
+    // BOOKING STATUS
+    // =================================================
+    const confirmedBookings = bookings.filter(
+        (booking) =>
+            String(booking?.status || "").toLowerCase() ===
+            "confirmed"
+    ).length;
 
-    const pendingBookings =
-        bookings.filter(
-            (booking) =>
-                String(
-                    booking.status || "pending"
-                ).toLowerCase() === "pending"
-        ).length;
+    const pendingBookings = bookings.filter(
+        (booking) =>
+            String(booking?.status || "").toLowerCase() ===
+            "pending"
+    ).length;
 
-    const cancelledBookings =
-        bookings.filter(
-            (booking) =>
-                String(
-                    booking.status || ""
-                ).toLowerCase() === "cancelled"
-        ).length;
+    const cancelledBookings = bookings.filter(
+        (booking) =>
+            String(booking?.status || "").toLowerCase() ===
+            "cancelled"
+    ).length;
 
-    // ==========================================
+    // =================================================
     // FORMAT DATE
-    // ==========================================
+    // =================================================
     const formatDate = (date) => {
-        if (!date) {
-            return "N/A";
+        if (!date) return "-";
+
+        const formatted = new Date(date);
+
+        if (Number.isNaN(formatted.getTime())) {
+            return "-";
         }
 
-        const parsedDate = new Date(date);
-
-        if (isNaN(parsedDate.getTime())) {
-            return date;
-        }
-
-        return parsedDate.toLocaleDateString(
-            "en-IN",
-            {
-                day: "2-digit",
-                month: "short",
-                year: "numeric",
-            }
-        );
+        return formatted.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+        });
     };
 
-    // ==========================================
-    // GET CUSTOMER NAME
-    // ==========================================
+    // =================================================
+    // CUSTOMER NAME
+    // =================================================
     const getCustomerName = (booking) => {
         return (
-            booking.name ||
-            booking.fullName ||
-            booking.customerName ||
-            booking.user?.name ||
-            "Unknown Customer"
+            booking?.customer?.name ||
+            booking?.user?.name ||
+            booking?.name ||
+            booking?.customerName ||
+            "Unknown"
         );
     };
 
-    // ==========================================
-    // GET CUSTOMER EMAIL
-    // ==========================================
+    // =================================================
+    // CUSTOMER EMAIL
+    // =================================================
     const getCustomerEmail = (booking) => {
         return (
-            booking.email ||
-            booking.user?.email ||
-            "No email"
+            booking?.customer?.email ||
+            booking?.user?.email ||
+            booking?.email ||
+            "-"
         );
     };
 
-    // ==========================================
+    // =================================================
     // STATUS STYLE
-    // ==========================================
+    // =================================================
     const getStatusStyle = (status) => {
-        const value = String(
-            status || "Pending"
+        const currentStatus = String(
+            status || ""
         ).toLowerCase();
 
-        if (value === "confirmed") {
+        if (currentStatus === "confirmed") {
             return {
                 className:
                     "bg-green-50 text-green-700 border-green-200",
-                icon: (
-                    <MdCheckCircle size={15} />
-                ),
+                icon: <MdCheckCircle />,
             };
         }
 
-        if (value === "cancelled") {
+        if (currentStatus === "cancelled") {
             return {
                 className:
                     "bg-red-50 text-red-700 border-red-200",
-                icon: <MdCancel size={15} />,
+                icon: <MdCancel />,
             };
         }
 
         return {
             className:
-                "bg-amber-50 text-amber-700 border-amber-200",
-            icon: <MdPending size={15} />,
+                "bg-yellow-50 text-yellow-700 border-yellow-200",
+            icon: <MdPending />,
         };
     };
 
-    // ==========================================
-    // STAT CARD
-    // ==========================================
-    const StatCard = ({
-        title,
-        value,
-        icon,
-        iconBg,
-        iconColor,
-        description,
-    }) => {
-        return (
-            <div
-                className="
-                    group
-                    rounded-2xl
-                    border
-                    border-gray-200
-                    bg-white
-                    p-4
-                    shadow-sm
-                    transition-all
-                    duration-300
-                    hover:-translate-y-1
-                    hover:shadow-lg
-                    sm:p-5
-                "
-            >
-                <div className="flex items-start justify-between gap-3">
-
-                    <div className="min-w-0">
-
-                        <p className="truncate text-xs font-medium text-gray-500 sm:text-sm">
-                            {title}
-                        </p>
-
-                        <h3
-                            className="
-                                mt-2
-                                text-2xl
-                                font-bold
-                                tracking-tight
-                                text-gray-800
-                                sm:text-3xl
-                            "
-                        >
-                            {value}
-                        </h3>
-
-                    </div>
-
-                    <div
-                        className={`
-                            flex
-                            h-10
-                            w-10
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-xl
-                            sm:h-12
-                            sm:w-12
-                            ${iconBg}
-                            ${iconColor}
-                            transition-transform
-                            duration-300
-                            group-hover:scale-110
-                        `}
-                    >
-                        {icon}
-                    </div>
-
-                </div>
-
-                <div className="mt-4 flex items-center gap-2">
-
-                    <MdTrendingUp
-                        size={16}
-                        className="shrink-0 text-green-500"
-                    />
-
-                    <span className="truncate text-xs font-medium text-gray-500">
-                        {description}
-                    </span>
-
-                </div>
-            </div>
-        );
-    };
-
-    // ==========================================
+    // =================================================
     // LOADING
-    // ==========================================
+    // =================================================
     if (loading) {
         return (
-            <div className="flex min-h-[60vh] items-center justify-center bg-white px-4">
-
+            <div className="flex min-h-[60vh] w-full items-center justify-center px-4">
                 <div className="text-center">
-
                     <div
                         className="
                             mx-auto
-                            flex
-                            h-12
-                            w-12
-                            items-center
-                            justify-center
-                            rounded-xl
-                            bg-blue-50
+                            h-10
+                            w-10
+                            animate-spin
+                            rounded-full
+                            border-4
+                            border-gray-200
+                            border-t-blue-600
+                            sm:h-12
+                            sm:w-12
                         "
-                    >
-                        <MdDashboard
-                            size={25}
-                            className="animate-pulse text-blue-600"
-                        />
-                    </div>
+                    />
 
-                    <p className="mt-4 text-sm font-medium text-gray-600">
+                    <p className="mt-4 text-sm text-gray-500">
                         Loading dashboard...
                     </p>
-
-                    <p className="mt-1 text-xs text-gray-400">
-                        Please wait a moment
-                    </p>
-
                 </div>
             </div>
         );
     }
 
-    // ==========================================
-    // MAIN
-    // ==========================================
     return (
-        <div className="min-h-full space-y-5 bg-white sm:space-y-6 lg:space-y-7">
+        <div className="w-full min-w-0 max-w-full space-y-5 sm:space-y-6 lg:space-y-7">
 
-            {/* ==========================================
+            {/* =================================================
                 HEADER
-            ========================================== */}
+            ================================================= */}
             <div
                 className="
                     flex
+                    w-full
+                    min-w-0
                     flex-col
                     gap-4
                     sm:flex-row
@@ -448,183 +450,156 @@ function Dashboard() {
                     sm:justify-between
                 "
             >
+                <div className="flex min-w-0 items-center gap-3">
+                    <div
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-blue-50
+                            text-blue-600
+                            sm:h-12
+                            sm:w-12
+                        "
+                    >
+                        <MdDashboard className="text-xl sm:text-2xl" />
+                    </div>
 
-                <div className="min-w-0">
-
-                    <div className="flex items-center gap-2">
-
-                        <div
-                            className="
-                                flex
-                                h-9
-                                w-9
-                                shrink-0
-                                items-center
-                                justify-center
-                                rounded-lg
-                                bg-blue-600
-                                text-white
-                            "
-                        >
-                            <MdDashboard size={20} />
-                        </div>
-
-                        <h1
-                            className="
-                                truncate
-                                text-xl
-                                font-bold
-                                tracking-tight
-                                text-gray-800
-                                sm:text-2xl
-                            "
-                        >
+                    <div className="min-w-0">
+                        <h1 className="text-xl font-bold text-gray-800 sm:text-2xl lg:text-3xl">
                             Dashboard
                         </h1>
 
+                        <p className="break-words text-xs leading-relaxed text-gray-500 sm:text-sm">
+                            Overview of your studio management system
+                        </p>
                     </div>
-
-                    <p className="mt-2 text-xs text-gray-500 sm:text-sm">
-                        Manage your photography business from one place.
-                    </p>
-
                 </div>
 
                 <button
                     type="button"
-                    onClick={() =>
-                        fetchDashboardData(true)
-                    }
+                    onClick={() => fetchDashboardData(true)}
                     disabled={refreshing}
                     className="
-                        inline-flex
+                        flex
                         w-full
+                        shrink-0
                         items-center
                         justify-center
                         gap-2
                         rounded-xl
-                        border
-                        border-gray-200
-                        bg-white
+                        bg-gray-900
                         px-4
-                        py-2.5
+                        py-3
                         text-sm
                         font-medium
-                        text-gray-700
-                        shadow-sm
-                        transition-all
-                        hover:border-blue-300
-                        hover:bg-blue-50
-                        hover:text-blue-600
+                        text-white
+                        transition
+                        hover:bg-gray-800
                         disabled:cursor-not-allowed
                         disabled:opacity-60
                         sm:w-auto
                     "
                 >
                     <MdRefresh
-                        size={19}
-                        className={
-                            refreshing
-                                ? "animate-spin"
-                                : ""
-                        }
+                        className={`text-xl ${
+                            refreshing ? "animate-spin" : ""
+                        }`}
                     />
 
-                    {refreshing
-                        ? "Refreshing..."
-                        : "Refresh Data"}
+                    {refreshing ? "Refreshing..." : "Refresh"}
                 </button>
-
             </div>
 
-            {/* ==========================================
+            {/* =================================================
                 ERROR
-            ========================================== */}
+            ================================================= */}
             {error && (
                 <div
                     className="
                         flex
+                        w-full
+                        min-w-0
                         flex-col
                         gap-3
-                        rounded-xl
+                        rounded-2xl
                         border
                         border-red-200
                         bg-red-50
-                        px-4
-                        py-3
+                        p-4
                         sm:flex-row
                         sm:items-center
                         sm:justify-between
                     "
                 >
-
-                    <p className="text-sm text-red-600">
+                    <p className="min-w-0 break-words text-sm text-red-700">
                         {error}
                     </p>
 
                     <button
                         type="button"
-                        onClick={() =>
-                            fetchDashboardData(true)
-                        }
+                        onClick={() => fetchDashboardData(true)}
                         className="
-                            self-start
+                            w-full
                             shrink-0
+                            rounded-lg
+                            bg-red-600
+                            px-4
+                            py-2
                             text-sm
                             font-medium
-                            text-red-700
-                            hover:underline
-                            sm:self-auto
+                            text-white
+                            transition
+                            hover:bg-red-700
+                            sm:w-auto
                         "
                     >
-                        Retry
+                        Try Again
                     </button>
-
                 </div>
             )}
 
-            {/* ==========================================
-                STATISTICS
-            ========================================== */}
+            {/* =================================================
+                STATS
+            ================================================= */}
             <div
                 className="
                     grid
+                    w-full
+                    min-w-0
                     grid-cols-1
                     gap-4
-                    sm:grid-cols-2
+                    min-[480px]:grid-cols-2
                     lg:grid-cols-3
                     xl:grid-cols-5
                 "
             >
-
                 <StatCard
                     title="Total Photos"
                     value={photos.length}
-                    icon={
-                        <MdPhotoLibrary size={25} />
-                    }
+                    icon={<MdPhotoLibrary className="text-xl sm:text-2xl" />}
                     iconBg="bg-blue-50"
                     iconColor="text-blue-600"
-                    description="Photo library"
+                    description="Photos in gallery"
                 />
 
                 <StatCard
                     title="Total Videos"
                     value={videos.length}
-                    icon={
-                        <MdVideoLibrary size={25} />
-                    }
+                    icon={<MdVideoLibrary className="text-xl sm:text-2xl" />}
                     iconBg="bg-purple-50"
                     iconColor="text-purple-600"
-                    description="Video collection"
+                    description="Videos uploaded"
                 />
 
                 <StatCard
                     title="Total Bookings"
                     value={bookings.length}
-                    icon={
-                        <MdCalendarMonth size={25} />
-                    }
+                    icon={<MdCalendarMonth className="text-xl sm:text-2xl" />}
                     iconBg="bg-orange-50"
                     iconColor="text-orange-600"
                     description="All bookings"
@@ -633,43 +608,38 @@ function Dashboard() {
                 <StatCard
                     title="Total Blogs"
                     value={blogs.length}
-                    icon={
-                        <MdArticle size={25} />
-                    }
-                    iconBg="bg-emerald-50"
-                    iconColor="text-emerald-600"
+                    icon={<MdArticle className="text-xl sm:text-2xl" />}
+                    iconBg="bg-green-50"
+                    iconColor="text-green-600"
                     description="Published content"
                 />
 
                 <StatCard
-                    title="Total Customers"
+                    title="Total Users"
                     value={users.length}
-                    icon={
-                        <MdPeople size={25} />
-                    }
+                    icon={<MdPeople className="text-xl sm:text-2xl" />}
                     iconBg="bg-pink-50"
                     iconColor="text-pink-600"
-                    description="Registered customers"
+                    description="Registered users"
                 />
-
             </div>
 
-            {/* ==========================================
+            {/* =================================================
                 RECENT BOOKINGS + QUICK ACTIONS
-            ========================================== */}
+            ================================================= */}
             <div
                 className="
                     grid
+                    w-full
+                    min-w-0
                     grid-cols-1
                     gap-5
                     xl:grid-cols-3
-                    xl:gap-6
                 "
             >
-
-                {/* ======================================
+                {/* =================================================
                     RECENT BOOKINGS
-                ====================================== */}
+                ================================================= */}
                 <div
                     className="
                         min-w-0
@@ -682,31 +652,29 @@ function Dashboard() {
                         xl:col-span-2
                     "
                 >
-
+                    {/* HEADER */}
                     <div
                         className="
                             flex
+                            min-w-0
                             flex-col
                             gap-3
                             border-b
                             border-gray-100
-                            px-4
-                            py-4
+                            p-4
                             sm:flex-row
                             sm:items-center
                             sm:justify-between
-                            sm:px-6
-                            sm:py-5
+                            sm:p-5
                         "
                     >
-
-                        <div>
-                            <h2 className="text-base font-semibold text-gray-800 sm:text-lg">
+                        <div className="min-w-0">
+                            <h2 className="text-base font-bold text-gray-800 sm:text-lg">
                                 Recent Bookings
                             </h2>
 
-                            <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                                Latest customer booking activity
+                            <p className="text-xs text-gray-500 sm:text-sm">
+                                Latest booking activity
                             </p>
                         </div>
 
@@ -715,872 +683,682 @@ function Dashboard() {
                             className="
                                 flex
                                 w-fit
+                                shrink-0
                                 items-center
                                 gap-1
                                 text-sm
                                 font-medium
                                 text-blue-600
-                                transition
                                 hover:text-blue-700
                             "
                         >
                             View All
-                            <MdArrowForward size={17} />
+                            <MdArrowForward />
                         </Link>
-
                     </div>
 
-                    {/* Horizontal Scroll */}
-                    <div className="w-full overflow-x-auto">
+                    {/* =================================================
+                        MOBILE BOOKING CARDS
+                    ================================================= */}
+                    <div className="block space-y-3 p-3 sm:hidden">
+                        {recentBookings.length > 0 ? (
+                            recentBookings.map((booking, index) => {
+                                const status = getStatusStyle(
+                                    booking?.status
+                                );
 
-                        <table className="w-full min-w-[620px]">
+                                return (
+                                    <div
+                                        key={
+                                            booking?._id ||
+                                            booking?.id ||
+                                            index
+                                        }
+                                        className="
+                                            min-w-0
+                                            overflow-hidden
+                                            rounded-xl
+                                            border
+                                            border-gray-200
+                                            bg-gray-50
+                                            p-4
+                                        "
+                                    >
+                                        <div className="flex min-w-0 items-start justify-between gap-3">
+                                            <div className="min-w-0 flex-1">
+                                                <p className="truncate text-sm font-semibold text-gray-800">
+                                                    {getCustomerName(
+                                                        booking
+                                                    )}
+                                                </p>
 
+                                                <p className="mt-1 truncate text-xs text-gray-500">
+                                                    {getCustomerEmail(
+                                                        booking
+                                                    )}
+                                                </p>
+                                            </div>
+
+                                            <span
+                                                className={`
+                                                    inline-flex
+                                                    shrink-0
+                                                    items-center
+                                                    gap-1
+                                                    rounded-full
+                                                    border
+                                                    px-2
+                                                    py-1
+                                                    text-[11px]
+                                                    font-medium
+                                                    ${status.className}
+                                                `}
+                                            >
+                                                {status.icon}
+
+                                                <span className="capitalize">
+                                                    {booking?.status ||
+                                                        "Pending"}
+                                                </span>
+                                            </span>
+                                        </div>
+
+                                        <div className="mt-4 grid grid-cols-2 gap-3 border-t border-gray-200 pt-3">
+                                            <div className="min-w-0">
+                                                <p className="text-[11px] text-gray-400">
+                                                    Booking Date
+                                                </p>
+
+                                                <p className="mt-1 truncate text-xs font-medium text-gray-700">
+                                                    {formatDate(
+                                                        booking?.bookingDate ||
+                                                            booking?.date
+                                                    )}
+                                                </p>
+                                            </div>
+
+                                            <div className="min-w-0">
+                                                <p className="text-[11px] text-gray-400">
+                                                    Created
+                                                </p>
+
+                                                <p className="mt-1 truncate text-xs font-medium text-gray-700">
+                                                    {formatDate(
+                                                        booking?.createdAt
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div className="py-8 text-center text-sm text-gray-500">
+                                No bookings found.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* =================================================
+                        DESKTOP TABLE
+                    ================================================= */}
+                    <div className="hidden w-full overflow-x-auto sm:block">
+                        <table className="w-full table-fixed text-left">
                             <thead>
-                                <tr className="border-b border-gray-100 bg-gray-50/70">
-
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 sm:px-6">
+                                <tr className="border-b border-gray-100 bg-gray-50">
+                                    <th className="w-[38%] px-4 py-3 text-xs font-semibold text-gray-500 lg:px-5">
                                         Customer
                                     </th>
 
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 sm:px-6">
-                                        Booking Date
+                                    <th className="w-[20%] px-3 py-3 text-xs font-semibold text-gray-500">
+                                        Date
                                     </th>
 
-                                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 sm:px-6">
+                                    <th className="w-[20%] px-3 py-3 text-xs font-semibold text-gray-500">
                                         Status
                                     </th>
 
+                                    <th className="w-[22%] px-3 py-3 text-xs font-semibold text-gray-500">
+                                        Created
+                                    </th>
                                 </tr>
                             </thead>
 
                             <tbody>
-
                                 {recentBookings.length > 0 ? (
                                     recentBookings.map(
-                                        (
-                                            booking,
-                                            index
-                                        ) => {
-                                            const customerName =
-                                                getCustomerName(
-                                                    booking
-                                                );
-
-                                            const customerEmail =
-                                                getCustomerEmail(
-                                                    booking
-                                                );
-
+                                        (booking, index) => {
                                             const status =
-                                                booking.status ||
-                                                "Pending";
-
-                                            const statusStyle =
                                                 getStatusStyle(
-                                                    status
+                                                    booking?.status
                                                 );
 
                                             return (
                                                 <tr
                                                     key={
-                                                        booking._id ||
-                                                        booking.id ||
+                                                        booking?._id ||
+                                                        booking?.id ||
                                                         index
                                                     }
                                                     className="
                                                         border-b
                                                         border-gray-100
-                                                        transition
+                                                        last:border-0
                                                         hover:bg-gray-50
                                                     "
                                                 >
+                                                    <td className="min-w-0 px-4 py-4 lg:px-5">
+                                                        <div className="min-w-0">
+                                                            <p className="truncate text-sm font-semibold text-gray-800">
+                                                                {getCustomerName(
+                                                                    booking
+                                                                )}
+                                                            </p>
 
-                                                    {/* Customer */}
-                                                    <td className="px-4 py-4 sm:px-6">
-
-                                                        <div className="flex items-center gap-3">
-
-                                                            <div
-                                                                className="
-                                                                    flex
-                                                                    h-9
-                                                                    w-9
-                                                                    shrink-0
-                                                                    items-center
-                                                                    justify-center
-                                                                    rounded-full
-                                                                    bg-blue-50
-                                                                    text-sm
-                                                                    font-semibold
-                                                                    text-blue-600
-                                                                    sm:h-10
-                                                                    sm:w-10
-                                                                "
-                                                            >
-                                                                {customerName
-                                                                    .charAt(
-                                                                        0
-                                                                    )
-                                                                    .toUpperCase()}
-                                                            </div>
-
-                                                            <div className="min-w-0">
-
-                                                                <p className="max-w-48 truncate text-sm font-semibold text-gray-800">
-                                                                    {customerName}
-                                                                </p>
-
-                                                                <p className="max-w-48 truncate text-xs text-gray-500">
-                                                                    {customerEmail}
-                                                                </p>
-
-                                                            </div>
-
+                                                            <p className="truncate text-xs text-gray-500">
+                                                                {getCustomerEmail(
+                                                                    booking
+                                                                )}
+                                                            </p>
                                                         </div>
-
                                                     </td>
 
-                                                    {/* Date */}
-                                                    <td className="px-4 py-4 sm:px-6">
-
-                                                        <div className="flex items-center gap-2 whitespace-nowrap text-sm text-gray-600">
-
-                                                            <MdAccessTime
-                                                                size={17}
-                                                                className="shrink-0 text-gray-400"
-                                                            />
-
-                                                            {formatDate(
-                                                                booking.date ||
-                                                                booking.bookingDate ||
-                                                                booking.createdAt
-                                                            )}
-
-                                                        </div>
-
+                                                    <td className="truncate px-3 py-4 text-xs text-gray-600 sm:text-sm">
+                                                        {formatDate(
+                                                            booking?.bookingDate ||
+                                                                booking?.date
+                                                        )}
                                                     </td>
 
-                                                    {/* Status */}
-                                                    <td className="px-4 py-4 sm:px-6">
-
+                                                    <td className="px-3 py-4">
                                                         <span
                                                             className={`
                                                                 inline-flex
+                                                                max-w-full
                                                                 items-center
-                                                                gap-1.5
-                                                                whitespace-nowrap
+                                                                gap-1
                                                                 rounded-full
                                                                 border
-                                                                px-3
+                                                                px-2
                                                                 py-1
-                                                                text-xs
+                                                                text-[11px]
                                                                 font-medium
-                                                                ${statusStyle.className}
+                                                                ${status.className}
                                                             `}
                                                         >
-                                                            {
-                                                                statusStyle.icon
-                                                            }
+                                                            {status.icon}
 
-                                                            {status}
+                                                            <span className="truncate capitalize">
+                                                                {booking?.status ||
+                                                                    "Pending"}
+                                                            </span>
                                                         </span>
-
                                                     </td>
 
+                                                    <td className="px-3 py-4 text-xs text-gray-500 sm:text-sm">
+                                                        <div className="flex min-w-0 items-center gap-1">
+                                                            <MdAccessTime className="shrink-0" />
+
+                                                            <span className="truncate">
+                                                                {formatDate(
+                                                                    booking?.createdAt
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             );
                                         }
                                     )
                                 ) : (
                                     <tr>
-
                                         <td
-                                            colSpan="3"
-                                            className="px-6 py-12 text-center"
+                                            colSpan="4"
+                                            className="px-5 py-12 text-center text-sm text-gray-500"
                                         >
-
-                                            <div className="flex flex-col items-center">
-
-                                                <div
-                                                    className="
-                                                        flex
-                                                        h-12
-                                                        w-12
-                                                        items-center
-                                                        justify-center
-                                                        rounded-full
-                                                        bg-gray-100
-                                                        text-gray-400
-                                                    "
-                                                >
-                                                    <MdCalendarMonth
-                                                        size={24}
-                                                    />
-                                                </div>
-
-                                                <p className="mt-3 text-sm font-medium text-gray-700">
-                                                    No bookings found
-                                                </p>
-
-                                                <p className="mt-1 text-xs text-gray-400">
-                                                    New bookings will appear here.
-                                                </p>
-
-                                            </div>
-
+                                            No bookings found.
                                         </td>
-
                                     </tr>
                                 )}
-
                             </tbody>
-
                         </table>
-
                     </div>
                 </div>
 
-                {/* ======================================
+                {/* =================================================
                     QUICK ACTIONS
-                ====================================== */}
-                <div className="min-w-0 rounded-2xl border border-gray-200 bg-white shadow-sm">
-
-                    <div className="border-b border-gray-100 px-4 py-4 sm:px-6 sm:py-5">
-
-                        <h2 className="text-base font-semibold text-gray-800 sm:text-lg">
+                ================================================= */}
+                <div
+                    className="
+                        min-w-0
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-gray-200
+                        bg-white
+                        p-4
+                        shadow-sm
+                        sm:p-5
+                    "
+                >
+                    <div className="mb-4">
+                        <h2 className="text-base font-bold text-gray-800 sm:text-lg">
                             Quick Actions
                         </h2>
 
-                        <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                            Manage your website content
+                        <p className="text-xs text-gray-500 sm:text-sm">
+                            Manage your studio quickly
                         </p>
-
                     </div>
 
-                    <div className="grid gap-3 p-4 sm:p-5">
+                    <div className="grid grid-cols-1 gap-3 min-[500px]:grid-cols-2 xl:grid-cols-1">
+                        <QuickAction
+                            to="/admin/photos"
+                            icon={<MdPhotoLibrary className="text-xl" />}
+                            title="Manage Photos"
+                            description="Add or remove photos"
+                            iconBg="bg-blue-50"
+                            iconColor="text-blue-600"
+                        />
 
-                        {/* Photos */}
+                        <QuickAction
+                            to="/admin/videos"
+                            icon={<MdVideoLibrary className="text-xl" />}
+                            title="Manage Videos"
+                            description="Upload studio videos"
+                            iconBg="bg-purple-50"
+                            iconColor="text-purple-600"
+                        />
+
+                        <QuickAction
+                            to="/admin/bookings"
+                            icon={<MdCalendarMonth className="text-xl" />}
+                            title="Bookings"
+                            description="View all bookings"
+                            iconBg="bg-orange-50"
+                            iconColor="text-orange-600"
+                        />
+
+                        <QuickAction
+                            to="/admin/blogs"
+                            icon={<MdArticle className="text-xl" />}
+                            title="Manage Blogs"
+                            description="Create new content"
+                            iconBg="bg-green-50"
+                            iconColor="text-green-600"
+                        />
+
+                        <QuickAction
+                            to="/users"
+                            icon={<MdPeople className="text-xl" />}
+                            title="Users"
+                            description="Manage customers"
+                            iconBg="bg-pink-50"
+                            iconColor="text-pink-600"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            {/* =================================================
+                BOOKING + CONTENT OVERVIEW
+            ================================================= */}
+            <div
+                className="
+                    grid
+                    w-full
+                    min-w-0
+                    grid-cols-1
+                    gap-5
+                    lg:grid-cols-2
+                "
+            >
+                {/* BOOKING OVERVIEW */}
+                <div
+                    className="
+                        min-w-0
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-gray-200
+                        bg-white
+                        p-4
+                        shadow-sm
+                        sm:p-5
+                    "
+                >
+                    <div className="mb-5">
+                        <h2 className="text-base font-bold text-gray-800 sm:text-lg">
+                            Booking Overview
+                        </h2>
+
+                        <p className="text-xs text-gray-500 sm:text-sm">
+                            Current booking status
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {/* CONFIRMED */}
+                        <div className="min-w-0 rounded-xl border border-green-100 bg-green-50 p-4">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <MdCheckCircle className="shrink-0 text-xl text-green-600" />
+
+                                <span className="truncate text-xs font-medium text-green-700">
+                                    Confirmed
+                                </span>
+                            </div>
+
+                            <p className="mt-3 text-2xl font-bold text-green-800">
+                                {confirmedBookings}
+                            </p>
+                        </div>
+
+                        {/* PENDING */}
+                        <div className="min-w-0 rounded-xl border border-yellow-100 bg-yellow-50 p-4">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <MdPending className="shrink-0 text-xl text-yellow-600" />
+
+                                <span className="truncate text-xs font-medium text-yellow-700">
+                                    Pending
+                                </span>
+                            </div>
+
+                            <p className="mt-3 text-2xl font-bold text-yellow-800">
+                                {pendingBookings}
+                            </p>
+                        </div>
+
+                        {/* CANCELLED */}
+                        <div className="min-w-0 rounded-xl border border-red-100 bg-red-50 p-4">
+                            <div className="flex min-w-0 items-center gap-2">
+                                <MdCancel className="shrink-0 text-xl text-red-600" />
+
+                                <span className="truncate text-xs font-medium text-red-700">
+                                    Cancelled
+                                </span>
+                            </div>
+
+                            <p className="mt-3 text-2xl font-bold text-red-800">
+                                {cancelledBookings}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* CONTENT OVERVIEW */}
+                <div
+                    className="
+                        min-w-0
+                        overflow-hidden
+                        rounded-2xl
+                        border
+                        border-gray-200
+                        bg-white
+                        p-4
+                        shadow-sm
+                        sm:p-5
+                    "
+                >
+                    <div className="mb-5">
+                        <h2 className="text-base font-bold text-gray-800 sm:text-lg">
+                            Content Overview
+                        </h2>
+
+                        <p className="text-xs text-gray-500 sm:text-sm">
+                            Manage your studio content
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                         <Link
                             to="/admin/photos"
                             className="
-                                group
                                 flex
+                                min-w-0
                                 items-center
                                 justify-between
+                                gap-3
+                                overflow-hidden
                                 rounded-xl
                                 border
-                                border-gray-100
-                                bg-gray-50/70
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:border-blue-200
-                                hover:bg-blue-50
-                                sm:p-4
+                                border-gray-200
+                                p-4
+                                transition
+                                hover:bg-gray-50
                             "
                         >
-
                             <div className="flex min-w-0 items-center gap-3">
-
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                                    <MdPhotoLibrary size={21} />
-                                </div>
+                                <MdPhotoLibrary className="shrink-0 text-2xl text-blue-600" />
 
                                 <div className="min-w-0">
-
                                     <p className="truncate text-sm font-semibold text-gray-800">
-                                        Manage Photos
+                                        Photos
                                     </p>
 
                                     <p className="text-xs text-gray-500">
-                                        {photos.length} photos
+                                        {photos.length} items
                                     </p>
-
                                 </div>
-
                             </div>
 
-                            <MdArrowForward
-                                size={19}
-                                className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-blue-600"
-                            />
-
+                            <MdArrowForward className="shrink-0 text-gray-400" />
                         </Link>
 
-                        {/* Videos */}
                         <Link
                             to="/admin/videos"
                             className="
-                                group
                                 flex
+                                min-w-0
                                 items-center
                                 justify-between
+                                gap-3
+                                overflow-hidden
                                 rounded-xl
                                 border
-                                border-gray-100
-                                bg-gray-50/70
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:border-purple-200
-                                hover:bg-purple-50
-                                sm:p-4
+                                border-gray-200
+                                p-4
+                                transition
+                                hover:bg-gray-50
                             "
                         >
-
                             <div className="flex min-w-0 items-center gap-3">
-
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
-                                    <MdVideoLibrary size={21} />
-                                </div>
+                                <MdVideoLibrary className="shrink-0 text-2xl text-purple-600" />
 
                                 <div className="min-w-0">
-
                                     <p className="truncate text-sm font-semibold text-gray-800">
-                                        Manage Videos
+                                        Videos
                                     </p>
 
                                     <p className="text-xs text-gray-500">
-                                        {videos.length} videos
+                                        {videos.length} items
                                     </p>
-
                                 </div>
-
                             </div>
 
-                            <MdArrowForward
-                                size={19}
-                                className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-purple-600"
-                            />
-
+                            <MdArrowForward className="shrink-0 text-gray-400" />
                         </Link>
 
-                        {/* Bookings */}
-                        <Link
-                            to="/admin/bookings"
-                            className="
-                                group
-                                flex
-                                items-center
-                                justify-between
-                                rounded-xl
-                                border
-                                border-gray-100
-                                bg-gray-50/70
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:border-orange-200
-                                hover:bg-orange-50
-                                sm:p-4
-                            "
-                        >
-
-                            <div className="flex min-w-0 items-center gap-3">
-
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-600">
-                                    <MdCalendarMonth size={21} />
-                                </div>
-
-                                <div className="min-w-0">
-
-                                    <p className="truncate text-sm font-semibold text-gray-800">
-                                        Manage Bookings
-                                    </p>
-
-                                    <p className="text-xs text-gray-500">
-                                        {pendingBookings} pending
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                            <MdArrowForward
-                                size={19}
-                                className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-orange-600"
-                            />
-
-                        </Link>
-
-                        {/* Blogs */}
                         <Link
                             to="/admin/blogs"
                             className="
-                                group
                                 flex
+                                min-w-0
                                 items-center
                                 justify-between
+                                gap-3
+                                overflow-hidden
                                 rounded-xl
                                 border
-                                border-gray-100
-                                bg-gray-50/70
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:border-emerald-200
-                                hover:bg-emerald-50
-                                sm:p-4
+                                border-gray-200
+                                p-4
+                                transition
+                                hover:bg-gray-50
                             "
                         >
-
                             <div className="flex min-w-0 items-center gap-3">
-
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                                    <MdArticle size={21} />
-                                </div>
+                                <MdArticle className="shrink-0 text-2xl text-green-600" />
 
                                 <div className="min-w-0">
-
                                     <p className="truncate text-sm font-semibold text-gray-800">
-                                        Manage Blogs
+                                        Blogs
                                     </p>
 
                                     <p className="text-xs text-gray-500">
-                                        {blogs.length} articles
+                                        {blogs.length} posts
                                     </p>
-
                                 </div>
-
                             </div>
 
-                            <MdArrowForward
-                                size={19}
-                                className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-emerald-600"
-                            />
-
+                            <MdArrowForward className="shrink-0 text-gray-400" />
                         </Link>
 
-                        {/* Users */}
                         <Link
-                            to="/admin/users"
+                            to="/users"
                             className="
-                                group
                                 flex
+                                min-w-0
                                 items-center
                                 justify-between
+                                gap-3
+                                overflow-hidden
                                 rounded-xl
                                 border
-                                border-gray-100
-                                bg-gray-50/70
-                                p-3
-                                transition-all
-                                duration-200
-                                hover:border-pink-200
-                                hover:bg-pink-50
-                                sm:p-4
+                                border-gray-200
+                                p-4
+                                transition
+                                hover:bg-gray-50
                             "
                         >
-
                             <div className="flex min-w-0 items-center gap-3">
-
-                                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600">
-                                    <MdPeople size={21} />
-                                </div>
+                                <MdPeople className="shrink-0 text-2xl text-pink-600" />
 
                                 <div className="min-w-0">
-
                                     <p className="truncate text-sm font-semibold text-gray-800">
-                                        Manage Users
+                                        Customers
                                     </p>
 
                                     <p className="text-xs text-gray-500">
                                         {users.length} users
                                     </p>
-
                                 </div>
-
                             </div>
 
-                            <MdArrowForward
-                                size={19}
-                                className="shrink-0 text-gray-400 transition group-hover:translate-x-1 group-hover:text-pink-600"
-                            />
-
+                            <MdArrowForward className="shrink-0 text-gray-400" />
                         </Link>
-
                     </div>
                 </div>
-
             </div>
 
-            {/* ==========================================
-                BOOKING + CONTENT OVERVIEW
-            ========================================== */}
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 lg:gap-6">
+            {/* =================================================
+                FOOTER ACTION
+            ================================================= */}
+            <div
+                className="
+                    flex
+                    w-full
+                    min-w-0
+                    flex-col
+                    gap-4
+                    overflow-hidden
+                    rounded-2xl
+                    border
+                    border-gray-200
+                    bg-white
+                    p-4
+                    shadow-sm
+                    sm:p-5
+                    lg:flex-row
+                    lg:items-center
+                    lg:justify-between
+                "
+            >
+                <div className="min-w-0">
+                    <h3 className="text-sm font-bold text-gray-800 sm:text-base">
+                        Need to add something new?
+                    </h3>
 
-                {/* BOOKING OVERVIEW */}
-                <div className="min-w-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-
-                    <div className="flex items-center justify-between gap-3">
-
-                        <div className="min-w-0">
-
-                            <h2 className="text-base font-semibold text-gray-800 sm:text-lg">
-                                Booking Overview
-                            </h2>
-
-                            <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                                Current booking status
-                            </p>
-
-                        </div>
-
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
-                            <MdCalendarMonth size={21} />
-                        </div>
-
-                    </div>
-
-                    <div className="mt-6 space-y-5">
-
-                        {/* Confirmed */}
-                        <div>
-
-                            <div className="mb-2 flex items-center justify-between">
-
-                                <div className="flex items-center gap-2">
-
-                                    <MdCheckCircle
-                                        size={17}
-                                        className="text-green-500"
-                                    />
-
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Confirmed
-                                    </span>
-
-                                </div>
-
-                                <span className="text-sm font-semibold text-gray-800">
-                                    {confirmedBookings}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-
-                                <div
-                                    className="h-full rounded-full bg-green-500 transition-all duration-500"
-                                    style={{
-                                        width:
-                                            bookings.length >
-                                            0
-                                                ? `${(confirmedBookings / bookings.length) * 100}%`
-                                                : "0%",
-                                    }}
-                                />
-
-                            </div>
-                        </div>
-
-                        {/* Pending */}
-                        <div>
-
-                            <div className="mb-2 flex items-center justify-between">
-
-                                <div className="flex items-center gap-2">
-
-                                    <MdPending
-                                        size={17}
-                                        className="text-amber-500"
-                                    />
-
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Pending
-                                    </span>
-
-                                </div>
-
-                                <span className="text-sm font-semibold text-gray-800">
-                                    {pendingBookings}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-
-                                <div
-                                    className="h-full rounded-full bg-amber-500 transition-all duration-500"
-                                    style={{
-                                        width:
-                                            bookings.length >
-                                            0
-                                                ? `${(pendingBookings / bookings.length) * 100}%`
-                                                : "0%",
-                                    }}
-                                />
-
-                            </div>
-                        </div>
-
-                        {/* Cancelled */}
-                        <div>
-
-                            <div className="mb-2 flex items-center justify-between">
-
-                                <div className="flex items-center gap-2">
-
-                                    <MdCancel
-                                        size={17}
-                                        className="text-red-500"
-                                    />
-
-                                    <span className="text-sm font-medium text-gray-700">
-                                        Cancelled
-                                    </span>
-
-                                </div>
-
-                                <span className="text-sm font-semibold text-gray-800">
-                                    {cancelledBookings}
-                                </span>
-
-                            </div>
-
-                            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-
-                                <div
-                                    className="h-full rounded-full bg-red-500 transition-all duration-500"
-                                    style={{
-                                        width:
-                                            bookings.length >
-                                            0
-                                                ? `${(cancelledBookings / bookings.length) * 100}%`
-                                                : "0%",
-                                    }}
-                                />
-
-                            </div>
-                        </div>
-
-                    </div>
+                    <p className="break-words text-xs text-gray-500 sm:text-sm">
+                        Quickly add photos, videos or blog posts.
+                    </p>
                 </div>
-
-                {/* CONTENT OVERVIEW */}
-                <div className="min-w-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-
-                    <div className="flex items-center justify-between gap-3">
-
-                        <div className="min-w-0">
-
-                            <h2 className="text-base font-semibold text-gray-800 sm:text-lg">
-                                Content Overview
-                            </h2>
-
-                            <p className="mt-1 text-xs text-gray-500 sm:text-sm">
-                                Your website content at a glance
-                            </p>
-
-                        </div>
-
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                            <MdPhotoLibrary size={21} />
-                        </div>
-
-                    </div>
-
-                    <div className="mt-6 grid grid-cols-1 gap-3 min-[400px]:grid-cols-2 sm:gap-4">
-
-                        {/* Photos */}
-                        <Link
-                            to="/admin/photos"
-                            className="rounded-xl border border-gray-100 p-3 transition hover:border-blue-200 hover:bg-blue-50 sm:p-4"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
-                                    <MdPhotoLibrary size={19} />
-                                </div>
-
-                                <div className="min-w-0">
-
-                                    <p className="text-xs text-gray-500">
-                                        Photos
-                                    </p>
-
-                                    <p className="text-lg font-bold text-gray-800 sm:text-xl">
-                                        {photos.length}
-                                    </p>
-
-                                </div>
-
-                            </div>
-                        </Link>
-
-                        {/* Videos */}
-                        <Link
-                            to="/admin/videos"
-                            className="rounded-xl border border-gray-100 p-3 transition hover:border-purple-200 hover:bg-purple-50 sm:p-4"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
-                                    <MdVideoLibrary size={19} />
-                                </div>
-
-                                <div className="min-w-0">
-
-                                    <p className="text-xs text-gray-500">
-                                        Videos
-                                    </p>
-
-                                    <p className="text-lg font-bold text-gray-800 sm:text-xl">
-                                        {videos.length}
-                                    </p>
-
-                                </div>
-
-                            </div>
-                        </Link>
-
-                        {/* Blogs */}
-                        <Link
-                            to="/admin/blogs"
-                            className="rounded-xl border border-gray-100 p-3 transition hover:border-emerald-200 hover:bg-emerald-50 sm:p-4"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600">
-                                    <MdArticle size={19} />
-                                </div>
-
-                                <div className="min-w-0">
-
-                                    <p className="text-xs text-gray-500">
-                                        Blogs
-                                    </p>
-
-                                    <p className="text-lg font-bold text-gray-800 sm:text-xl">
-                                        {blogs.length}
-                                    </p>
-
-                                </div>
-
-                            </div>
-                        </Link>
-
-                        {/* Customers */}
-                        <Link
-                            to="/admin/users"
-                            className="rounded-xl border border-gray-100 p-3 transition hover:border-pink-200 hover:bg-pink-50 sm:p-4"
-                        >
-
-                            <div className="flex items-center gap-3">
-
-                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600">
-                                    <MdPeople size={19} />
-                                </div>
-
-                                <div className="min-w-0">
-
-                                    <p className="text-xs text-gray-500">
-                                        Customers
-                                    </p>
-
-                                    <p className="text-lg font-bold text-gray-800 sm:text-xl">
-                                        {users.length}
-                                    </p>
-
-                                </div>
-
-                            </div>
-                        </Link>
-
-                    </div>
-                </div>
-
-            </div>
-
-            {/* ==========================================
-                FOOTER QUICK LINKS
-            ========================================== */}
-            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4 sm:p-5">
 
                 <div
                     className="
-                        flex
-                        flex-col
-                        gap-4
-                        sm:flex-row
-                        sm:items-center
-                        sm:justify-between
+                        grid
+                        w-full
+                        grid-cols-1
+                        gap-2
+                        min-[400px]:grid-cols-3
+                        lg:w-auto
                     "
                 >
+                    <Link
+                        to="/admin/photos"
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-1.5
+                            rounded-lg
+                            bg-blue-600
+                            px-4
+                            py-2.5
+                            text-xs
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-blue-700
+                        "
+                    >
+                        <MdAdd />
+                        Photo
+                    </Link>
 
-                    <div className="min-w-0">
+                    <Link
+                        to="/admin/videos"
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-1.5
+                            rounded-lg
+                            bg-purple-600
+                            px-4
+                            py-2.5
+                            text-xs
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-purple-700
+                        "
+                    >
+                        <MdAdd />
+                        Video
+                    </Link>
 
-                        <p className="text-sm font-semibold text-gray-800">
-                            Need to add new content?
-                        </p>
-
-                        <p className="mt-1 text-xs text-gray-500">
-                            Quickly add photos, videos or manage your bookings.
-                        </p>
-
-                    </div>
-
-                    <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-
-                        <Link
-                            to="/admin/photos"
-                            className="
-                                inline-flex
-                                w-full
-                                items-center
-                                justify-center
-                                gap-2
-                                rounded-lg
-                                bg-blue-600
-                                px-4
-                                py-2
-                                text-sm
-                                font-medium
-                                text-white
-                                transition
-                                hover:bg-blue-700
-                                sm:w-auto
-                            "
-                        >
-                            <MdAdd size={18} />
-                            Add Photos
-                        </Link>
-
-                        <Link
-                            to="/admin/videos"
-                            className="
-                                inline-flex
-                                w-full
-                                items-center
-                                justify-center
-                                gap-2
-                                rounded-lg
-                                border
-                                border-gray-200
-                                bg-white
-                                px-4
-                                py-2
-                                text-sm
-                                font-medium
-                                text-gray-700
-                                transition
-                                hover:border-purple-300
-                                hover:text-purple-600
-                                sm:w-auto
-                            "
-                        >
-                            <MdAdd size={18} />
-                            Add Video
-                        </Link>
-
-                    </div>
-
+                    <Link
+                        to="/admin/blogs"
+                        className="
+                            flex
+                            items-center
+                            justify-center
+                            gap-1.5
+                            rounded-lg
+                            bg-green-600
+                            px-4
+                            py-2.5
+                            text-xs
+                            font-medium
+                            text-white
+                            transition
+                            hover:bg-green-700
+                        "
+                    >
+                        <MdAdd />
+                        Blog
+                    </Link>
                 </div>
             </div>
-
         </div>
     );
 }
