@@ -51,9 +51,7 @@ function Navbar() {
                 </span>
               </h1>
 
-              <p className="hidden text-[10px] uppercase tracking-[3px] text-slate-500 sm:block">
-                Creative Studio
-              </p>
+             
             </div>
           </Link>
 
